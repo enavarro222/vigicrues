@@ -1,4 +1,5 @@
 """Pydantic models for Vigicrues API data structures."""
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -46,9 +47,7 @@ class StationDetails(Station):
     picture_url: Optional[str] = Field(
         None, description="URL to station photo (if available)"
     )
-    commune_code: Optional[str] = Field(
-        None, description="Commune code (if available)"
-    )
+    commune_code: Optional[str] = Field(None, description="Commune code (if available)")
     is_prediction_station: bool = Field(
         ..., description="Whether station provides predictions"
     )
@@ -58,9 +57,7 @@ class StationDetails(Station):
     has_flow_data: bool = Field(
         ..., description="Whether station has flow observations"
     )
-    has_predictions: bool = Field(
-        ..., description="Whether station has predictions"
-    )
+    has_predictions: bool = Field(..., description="Whether station has predictions")
     historical_floods: List[Dict[str, Any]] = Field(
         ..., description="Historical flood data with name, height, and flow"
     )

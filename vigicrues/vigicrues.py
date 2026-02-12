@@ -1,4 +1,5 @@
 """VigicruesClient for accessing Vigicrues API endpoints."""
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -12,7 +13,7 @@ from .models import (
     Station,
     StationDetails,
     Territory,
-    Troncon
+    Troncon,
 )
 
 
@@ -42,7 +43,9 @@ class VigicruesClient:
         """
         if self._session is None:
             raise RuntimeError("Session is not initialized")
-        async with self._session.get(f"{self.VIGICRUES_BASE_URL}/TerEntVigiCru.json") as response:
+        async with self._session.get(
+            f"{self.VIGICRUES_BASE_URL}/TerEntVigiCru.json"
+        ) as response:
             response.raise_for_status()
             data = await response.json()
 
@@ -51,7 +54,7 @@ class VigicruesClient:
                 territories.append(
                     Territory(
                         id=territory_data.get("CdEntVigiCru"),
-                        name=territory_data.get("LbEntVigiCru")
+                        name=territory_data.get("LbEntVigiCru"),
                     )
                 )
 
@@ -90,7 +93,7 @@ class VigicruesClient:
                     troncons.append(
                         Troncon(
                             id=troncon_data.get("CdEntVigiCruInferieur"),
-                            name=troncon_data.get("LbEntVigiCruInferieur")
+                            name=troncon_data.get("LbEntVigiCruInferieur"),
                         )
                     )
 
@@ -129,7 +132,7 @@ class VigicruesClient:
                     stations.append(
                         Station(
                             id=station_data.get("CdEntVigiCruInferieur"),
-                            name=station_data.get("LbEntVigiCruInferieur")
+                            name=station_data.get("LbEntVigiCruInferieur"),
                         )
                     )
 
@@ -174,13 +177,15 @@ class VigicruesClient:
                 commune_code=data.get("CdCommune"),
                 is_prediction_station=station_data.get("StationPrevision", False),
                 has_height_data=True,  # Assume height data is available
-                has_flow_data=True,   # Assume flow data is available
+                has_flow_data=True,  # Assume flow data is available
                 has_predictions=station_data.get("StationPrevision", False),
                 historical_floods=station_data.get("CruesHistoriques", []),
-                related_stations=station_data.get("StationsBassin", [])
+                related_stations=station_data.get("StationsBassin", []),
             )
 
-    async def get_latest_observations(self, station_id: str, obs_type: str) -> Observation:
+    async def get_latest_observations(
+        self, station_id: str, obs_type: str
+    ) -> Observation:
         """Get the latest observation for a station.
 
         Args:
@@ -205,7 +210,7 @@ class VigicruesClient:
         params = {
             "CdStationHydro": station_id,
             "GrdSerie": obs_type,
-            "FormatDate": "iso"
+            "FormatDate": "iso",
         }
 
         if self._session is None:
@@ -225,5 +230,5 @@ class VigicruesClient:
                 timestamp=datetime.fromisoformat(latest_observation.get("DtObsHydro")),
                 value=latest_observation.get("ResObsHydro"),
                 type=ObservationType(obs_type),
-                unit="m" if obs_type == "H" else "m³/s"
+                unit="m" if obs_type == "H" else "m³/s",
             )

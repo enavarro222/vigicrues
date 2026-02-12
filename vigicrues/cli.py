@@ -1,4 +1,5 @@
 """Command-line interface for Vigicrues client."""
+
 import argparse
 import asyncio
 from typing import Any
@@ -27,11 +28,15 @@ async def get(client: Vigicrues, args: Any) -> None:
 
     if details.has_height_data:
         observation = await client.get_latest_observations(details.id, "H")
-        print(f"\nLatest water level: {observation.value} {observation.unit} at {observation.timestamp}")
+        print(
+            f"\nLatest water level: {observation.value} {observation.unit} at {observation.timestamp}"
+        )
 
     if details.has_flow_data:
         observation = await client.get_latest_observations(details.id, "Q")
-        print(f"Latest flow rate: {observation.value} {observation.unit} at {observation.timestamp}")
+        print(
+            f"Latest flow rate: {observation.value} {observation.unit} at {observation.timestamp}"
+        )
 
 
 async def territories(client: Vigicrues, args: Any) -> None:
@@ -86,26 +91,35 @@ def main() -> None:
     search_parser.set_defaults(func=search)
 
     # Get command
-    get_parser = subparsers.add_parser("get", help="Get latest observations for a station")
+    get_parser = subparsers.add_parser(
+        "get", help="Get latest observations for a station"
+    )
     get_parser.add_argument("station_id", help="Station identifier (e.g., O408101001)")
     get_parser.set_defaults(func=get)
 
     # Territories command
-    territories_parser = subparsers.add_parser("territories", help="List all territories")
+    territories_parser = subparsers.add_parser(
+        "territories", help="List all territories"
+    )
     territories_parser.set_defaults(func=territories)
 
     # Troncons command
-    troncons_parser = subparsers.add_parser("troncons", help="List troncons in a territory")
+    troncons_parser = subparsers.add_parser(
+        "troncons", help="List troncons in a territory"
+    )
     troncons_parser.add_argument("territory_id", help="Territory identifier")
     troncons_parser.set_defaults(func=troncons)
 
     # Stations command
-    stations_parser = subparsers.add_parser("stations", help="List stations in a troncon")
+    stations_parser = subparsers.add_parser(
+        "stations", help="List stations in a troncon"
+    )
     stations_parser.add_argument("troncon_id", help="Troncon identifier")
     stations_parser.set_defaults(func=stations)
 
     args = parser.parse_args()
     asyncio.run(run(args))
-    
+
+
 if __name__ == "__main__":
     main()

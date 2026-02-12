@@ -1,4 +1,5 @@
 """Main Vigicrues client combining DiscoveryClient and VigicruesClient."""
+
 from __future__ import annotations
 
 import aiohttp
@@ -10,7 +11,9 @@ from .vigicrues import VigicruesClient
 class Vigicrues(VigicruesClient, DiscoveryClient):
     """Combined client for Vigicrues and station discovery."""
 
-    def __init__(self, session: aiohttp.ClientSession | None = None, timeout: float | None = None) -> None:
+    def __init__(
+        self, session: aiohttp.ClientSession | None = None, timeout: float | None = None
+    ) -> None:
         """Initialize client with optional external session and timeout.
 
         Args:
@@ -23,11 +26,12 @@ class Vigicrues(VigicruesClient, DiscoveryClient):
         self._owns_session = session is None
         self._timeout = timeout or 30.0
 
-
     async def __aenter__(self) -> "Vigicrues":
         """Enter async context, creating session if needed."""
         if self._owns_session:
-            self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=self._timeout))
+            self._session = aiohttp.ClientSession(
+                timeout=aiohttp.ClientTimeout(total=self._timeout)
+            )
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
