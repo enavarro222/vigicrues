@@ -22,7 +22,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -e .[dev]
 
       - name: Check code formatting with ruff
@@ -34,3 +34,41 @@ jobs:
       - name: Check typing with mypy
         run: mypy vigicrues/
   
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - python-version: "3.10"
+            upload-coverage: false
+          - python-version: "3.11"
+            upload-coverage: false
+          - python-version: "3.12"
+            upload-coverage: false
+          - python-version: "3.13"
+            upload-coverage: true
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .[dev]
+
+    - name: Run tests (with coverage)
+      run: |
+        pytest
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: true
