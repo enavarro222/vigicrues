@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/enavarro222/vigicrues/blob/main/LICENSE)
 [![Code Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](https://github.com/enavarro222/vigicrues)
 
-A asynchronous Python client for the Vigicrues API (French flood monitoring service). This library allows you to search for monitoring stations and retrieve real-time water level and flow rate observations.
+A Python client for the Vigicrues API (French flood monitoring service). This library allows you to search for monitoring stations and retrieve real-time water level and flow rate observations.
 
 ## Features
 
@@ -25,8 +25,8 @@ pip install vigicrues
 Or install from source:
 
 ```bash
-git clone https://github.com/your-username/vigicrues-client.git
-cd vigicrues-client
+git clone git@github.com:enavarro222/vigicrues.git
+cd vigicrues
 pip install -e .[dev]
 ```
 
