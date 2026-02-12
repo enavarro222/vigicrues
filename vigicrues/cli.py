@@ -2,6 +2,7 @@
 
 import argparse
 import asyncio
+import aiohttp
 from typing import Any
 
 from .client import Vigicrues
@@ -13,14 +14,18 @@ async def search(client: Vigicrues, args: Any) -> None:
     if stations:
         print(f"Found {len(stations)} stations:")
         for station in stations:
-            print(f"  {station.name} (ID: {station.id})")
+            print(f"  - {station.name} (ID: {station.id})")
     else:
         print("No stations found")
 
 
 async def get(client: Vigicrues, args: Any) -> None:
     """Get latest observations for a station."""
-    details = await client.get_station_details(args.station_id)
+    try:
+        details = await client.get_station_details(args.station_id)
+    except aiohttp.ClientResponseError:
+        print(f"Impossible to trouver la station {args.station_id}")
+        return
     print(f"Station: {details.name}")
     print(f"River: {details.river}")
     print(f"City: {details.city}")

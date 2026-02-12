@@ -2,8 +2,9 @@
 
 import argparse
 from datetime import datetime
+import aiohttp
 
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 import pytest
 
@@ -17,6 +18,12 @@ from vigicrues.models import (
     Troncon,
 )
 from vigicrues import cli
+
+@pytest.fixture
+def mock_print():
+    """Fixture for mocking print function."""
+    with patch("vigicrues.cli.print") as mock_print:
+        yield mock_print
 
 
 @pytest.fixture
@@ -187,6 +194,26 @@ async def test_get_command_with_both_data(
     assert mock_vigicrues_client.get_latest_observations.call_count == 2
     mock_vigicrues_client.get_latest_observations.assert_any_call("O408101001", "H")
     mock_vigicrues_client.get_latest_observations.assert_any_call("O408101001", "Q")
+
+
+@pytest.mark.asyncio
+async def test_get_command_http_error(
+    mock_args: argparse.Namespace, mock_vigicrues_client, mock_print
+) -> None:
+    """Test get CLI command with both height and flow data."""
+    mock_args.station_id = "O408101001"
+    mock_args.func = cli.get
+
+    mock_vigicrues_client.get_station_details.side_effect = aiohttp.ClientResponseError(
+        request_info=Mock(), history=Mock(), status=404, message="Not Found"
+    )
+    
+    await cli.run(mock_args)
+
+    mock_print.assert_called_once_with("Impossible to trouver la station O408101001")
+    mock_vigicrues_client.get_station_details.assert_called_once_with("O408101001")
+    mock_vigicrues_client.get_latest_observations.assert_not_called()
+    mock_vigicrues_client.get_latest_observations.assert_not_called()
 
 
 @pytest.mark.asyncio
