@@ -1,4 +1,5 @@
 """Tests for VigicruesClient."""
+
 import aiohttp
 from aiohttp import ClientSession
 import re
@@ -11,7 +12,9 @@ from tests.conftest import add_response
 
 
 @pytest.mark.asyncio
-async def test_get_troncon_stations_success(mock_aioresponses: aioresponses, session: ClientSession) -> None:
+async def test_get_troncon_stations_success(
+    mock_aioresponses: aioresponses, session: ClientSession
+) -> None:
     """Test successful troncon stations retrieval."""
     add_response(
         mock_aioresponses,
@@ -23,12 +26,12 @@ async def test_get_troncon_stations_success(mock_aioresponses: aioresponses, ses
                     "aNMoinsUn": [
                         {
                             "CdEntVigiCruInferieur": "O811352001",
-                            "LbEntVigiCruInferieur": "Figeac"
+                            "LbEntVigiCruInferieur": "Figeac",
                         }
                     ]
                 }
             ]
-        }
+        },
     )
 
     client = VigicruesClient(session=session)
@@ -48,7 +51,9 @@ async def test_get_troncon_stations_no_session(mock_aioresponses: aioresponses) 
 
 
 @pytest.mark.asyncio
-async def test_get_troncon_stations_empty_id(mock_aioresponses: aioresponses, session: ClientSession) -> None:
+async def test_get_troncon_stations_empty_id(
+    mock_aioresponses: aioresponses, session: ClientSession
+) -> None:
     """Test troncon stations with empty ID."""
     client = VigicruesClient(session=session)
     with pytest.raises(ValueError, match="Troncon ID cannot be empty"):
@@ -56,13 +61,15 @@ async def test_get_troncon_stations_empty_id(mock_aioresponses: aioresponses, se
 
 
 @pytest.mark.asyncio
-async def test_get_troncon_stations_http_error(mock_aioresponses: aioresponses, session: ClientSession) -> None:
+async def test_get_troncon_stations_http_error(
+    mock_aioresponses: aioresponses, session: ClientSession
+) -> None:
     """Test troncon stations with HTTP error."""
     add_response(
         mock_aioresponses,
         "GET",
         r"^https://www.vigicrues.gouv.fr/services/v1.1/TronEntVigiCru.json.*$",
-        status=500
+        status=500,
     )
 
     client = VigicruesClient(session=session)

@@ -1,4 +1,5 @@
 """Tests for VigicruesClient."""
+
 import aiohttp
 from aiohttp import ClientSession
 
@@ -11,7 +12,9 @@ from tests.conftest import add_response
 
 
 @pytest.mark.asyncio
-async def test_get_station_details_success(mock_aioresponses: aioresponses, session: ClientSession) -> None:
+async def test_get_station_details_success(
+    mock_aioresponses: aioresponses, session: ClientSession
+) -> None:
     """Test successful station details retrieval."""
     add_response(
         mock_aioresponses,
@@ -23,27 +26,23 @@ async def test_get_station_details_success(mock_aioresponses: aioresponses, sess
             "CdCommune": "82121",
             "CoordStationHydro": {
                 "CoordXStationHydro": "567613",
-                "CoordYStationHydro": "6325598"
+                "CoordYStationHydro": "6325598",
             },
             "VigilanceCrues": {
                 "Photo": "t",
                 "StationPrevision": True,
                 "CruesHistoriques": [
-                    {
-                        "LbUsuel": "Crue du 03/03/1930",
-                        "ValHauteur": 11.5,
-                        "ValDebit": 0
-                    }
+                    {"LbUsuel": "Crue du 03/03/1930", "ValHauteur": 11.5, "ValDebit": 0}
                 ],
                 "StationsBassin": [
                     {
                         "CdStationHydro": "O598101001",
                         "LbStationHydro": "Moissac",
-                        "LbCoursEau": "Tarn"
+                        "LbCoursEau": "Tarn",
                     }
-                ]
-            }
-        }
+                ],
+            },
+        },
     )
 
     client = VigicruesClient(session=session)
@@ -61,7 +60,9 @@ async def test_get_station_details_success(mock_aioresponses: aioresponses, sess
 
 
 @pytest.mark.asyncio
-async def test_get_station_invalid_details(mock_aioresponses: aioresponses, session: ClientSession) -> None:
+async def test_get_station_invalid_details(
+    mock_aioresponses: aioresponses, session: ClientSession
+) -> None:
     """Test successful station details retrieval."""
     add_response(
         mock_aioresponses,
@@ -72,28 +73,24 @@ async def test_get_station_invalid_details(mock_aioresponses: aioresponses, sess
             "LbCoursEau": "Tarn",
             "CdCommune": "82121",
             "CoordStationHydro": {
-                "CoordXStationHydro": "aer567613",      # invalid data
-                "CoordYStationHydro": "6325598"
+                "CoordXStationHydro": "aer567613",  # invalid data
+                "CoordYStationHydro": "6325598",
             },
             "VigilanceCrues": {
                 "Photo": "t",
                 "StationPrevision": True,
                 "CruesHistoriques": [
-                    {
-                        "LbUsuel": "Crue du 03/03/1930",
-                        "ValHauteur": 11.5,
-                        "ValDebit": 0
-                    }
+                    {"LbUsuel": "Crue du 03/03/1930", "ValHauteur": 11.5, "ValDebit": 0}
                 ],
                 "StationsBassin": [
                     {
                         "CdStationHydro": "O598101001",
                         "LbStationHydro": "Moissac",
-                        "LbCoursEau": "Tarn"
+                        "LbCoursEau": "Tarn",
                     }
-                ]
-            }
-        }
+                ],
+            },
+        },
     )
 
     client = VigicruesClient(session=session)
@@ -102,11 +99,14 @@ async def test_get_station_invalid_details(mock_aioresponses: aioresponses, sess
 
 
 @pytest.mark.asyncio
-async def test_get_station_details_empty_id(mock_aioresponses: aioresponses, session: ClientSession) -> None:
+async def test_get_station_details_empty_id(
+    mock_aioresponses: aioresponses, session: ClientSession
+) -> None:
     """Test station details with empty ID."""
     client = VigicruesClient(session=session)
     with pytest.raises(ValueError, match="Station ID cannot be empty"):
         await client.get_station_details("")
+
 
 @pytest.mark.asyncio
 async def test_get_station_details_no_session(mock_aioresponses: aioresponses) -> None:
@@ -117,13 +117,15 @@ async def test_get_station_details_no_session(mock_aioresponses: aioresponses) -
 
 
 @pytest.mark.asyncio
-async def test_get_station_details_http_error(mock_aioresponses: aioresponses, session: ClientSession) -> None:
+async def test_get_station_details_http_error(
+    mock_aioresponses: aioresponses, session: ClientSession
+) -> None:
     """Test station details with HTTP error."""
     add_response(
         mock_aioresponses,
         "GET",
         "https://www.vigicrues.gouv.fr/services/station.json/index.php",
-        status=500
+        status=500,
     )
 
     client = VigicruesClient(session=session)

@@ -1,4 +1,5 @@
 """Tests for main Vigicrues client."""
+
 import aiohttp
 import pytest
 import re
@@ -20,10 +21,10 @@ async def test_main_client_context_manager(mock_aioresponses: aioresponses) -> N
             "results": [
                 {
                     "cdstationhydro": "O408101001",
-                    "lbstationhydro": "Le Tarn à Rabastens - Saint-Sulpice"
+                    "lbstationhydro": "Le Tarn à Rabastens - Saint-Sulpice",
                 }
-            ]
-        }
+            ],
+        },
     )
 
     add_response(
@@ -32,12 +33,9 @@ async def test_main_client_context_manager(mock_aioresponses: aioresponses) -> N
         "https://www.vigicrues.gouv.fr/services/TerEntVigiCru.json",
         body={
             "ListEntVigiCru": [
-                {
-                    "CdEntVigiCru": "25",
-                    "LbEntVigiCru": "Garonne-Tarn-Lot"
-                }
+                {"CdEntVigiCru": "25", "LbEntVigiCru": "Garonne-Tarn-Lot"}
             ]
-        }
+        },
     )
 
     async with Vigicrues() as client:
@@ -65,10 +63,10 @@ async def test_main_client_external_session(mock_aioresponses: aioresponses) -> 
             "results": [
                 {
                     "cdstationhydro": "O408101001",
-                    "lbstationhydro": "Le Tarn à Rabastens - Saint-Sulpice"
+                    "lbstationhydro": "Le Tarn à Rabastens - Saint-Sulpice",
                 }
-            ]
-        }
+            ],
+        },
     )
 
     async with aiohttp.ClientSession() as session:
@@ -95,10 +93,10 @@ async def test_main_client_timeout(mock_aioresponses: aioresponses) -> None:
             "results": [
                 {
                     "cdstationhydro": "O408101001",
-                    "lbstationhydro": "Le Tarn à Rabastens - Saint-Sulpice"
+                    "lbstationhydro": "Le Tarn à Rabastens - Saint-Sulpice",
                 }
-            ]
-        }
+            ],
+        },
     )
 
     async with Vigicrues(timeout=10.0) as client:
@@ -116,7 +114,7 @@ async def test_main_client_http_error(mock_aioresponses: aioresponses) -> None:
         mock_aioresponses,
         "GET",
         r"^https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/referentiel-des-stations-du-reseau-vigicrues/records.*$",
-        status=500
+        status=500,
     )
 
     async with Vigicrues() as client:

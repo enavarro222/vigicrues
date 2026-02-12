@@ -1,4 +1,5 @@
 """Test configuration for Vigicrues client."""
+
 import json
 import pytest
 import re
@@ -15,10 +16,12 @@ def mock_aioresponses() -> aioresponses:
     with aioresponses() as mock:
         yield mock
 
+
 @pytest.fixture
 async def session() -> ClientSession:
     async with ClientSession(timeout=ClientTimeout(total=3)) as session:
         yield session
+
 
 @pytest.fixture
 async def vigicrues_client(mock_aioresponses: aioresponses) -> Vigicrues:
@@ -36,7 +39,7 @@ def add_response(
     status: int = 200,
     body: Any = None,
     repeat: int = 1,
-    **kwargs
+    **kwargs,
 ) -> None:
     """Helper function to mock HTTP responses."""
     if body is None:
@@ -50,5 +53,5 @@ def add_response(
         body=json.dumps(body),
         repeat=repeat,
         content_type="application/json",
-        **kwargs
+        **kwargs,
     )

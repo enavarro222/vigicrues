@@ -1,4 +1,5 @@
 """Tests for VigicruesClient."""
+
 import aiohttp
 from aiohttp import ClientSession
 import re
@@ -11,7 +12,9 @@ from tests.conftest import add_response
 
 
 @pytest.mark.asyncio
-async def test_get_territories_success(mock_aioresponses: aioresponses, session: ClientSession) -> None:
+async def test_get_territories_success(
+    mock_aioresponses: aioresponses, session: ClientSession
+) -> None:
     """Test successful territories retrieval."""
     add_response(
         mock_aioresponses,
@@ -19,12 +22,9 @@ async def test_get_territories_success(mock_aioresponses: aioresponses, session:
         "https://www.vigicrues.gouv.fr/services/TerEntVigiCru.json",
         body={
             "ListEntVigiCru": [
-                {
-                    "CdEntVigiCru": "25",
-                    "LbEntVigiCru": "Garonne-Tarn-Lot"
-                }
+                {"CdEntVigiCru": "25", "LbEntVigiCru": "Garonne-Tarn-Lot"}
             ]
-        }
+        },
     )
 
     client = VigicruesClient(session=session)
@@ -44,16 +44,17 @@ async def test_get_territories_no_session(mock_aioresponses: aioresponses) -> No
 
 
 @pytest.mark.asyncio
-async def test_get_territories_http_error(mock_aioresponses: aioresponses, session: ClientSession) -> None:
+async def test_get_territories_http_error(
+    mock_aioresponses: aioresponses, session: ClientSession
+) -> None:
     """Test territories with HTTP error."""
     add_response(
         mock_aioresponses,
         "GET",
         "https://www.vigicrues.gouv.fr/services/TerEntVigiCru.json",
-        status=500
+        status=500,
     )
 
     client = VigicruesClient(session=session)
     with pytest.raises(aiohttp.ClientResponseError):
         await client.get_territories()
-

@@ -1,4 +1,5 @@
 """Tests for VigicruesClient."""
+
 import aiohttp
 from aiohttp import ClientSession
 import re
@@ -11,7 +12,9 @@ from tests.conftest import add_response
 
 
 @pytest.mark.asyncio
-async def test_get_troncons_success(mock_aioresponses: aioresponses, session: ClientSession) -> None:
+async def test_get_troncons_success(
+    mock_aioresponses: aioresponses, session: ClientSession
+) -> None:
     """Test successful troncons retrieval."""
     add_response(
         mock_aioresponses,
@@ -23,12 +26,12 @@ async def test_get_troncons_success(mock_aioresponses: aioresponses, session: Cl
                     "aNMoinsUn": [
                         {
                             "CdEntVigiCruInferieur": "TL12",
-                            "LbEntVigiCruInferieur": "Célé"
+                            "LbEntVigiCruInferieur": "Célé",
                         }
                     ]
                 }
             ]
-        }
+        },
     )
 
     client = VigicruesClient(session=session)
@@ -40,7 +43,9 @@ async def test_get_troncons_success(mock_aioresponses: aioresponses, session: Cl
 
 
 @pytest.mark.asyncio
-async def test_get_troncons_empty_id(mock_aioresponses: aioresponses, session: ClientSession) -> None:
+async def test_get_troncons_empty_id(
+    mock_aioresponses: aioresponses, session: ClientSession
+) -> None:
     """Test territories with empty ID."""
     client = VigicruesClient(session=session)
     with pytest.raises(ValueError, match="Territory ID cannot be empty"):
@@ -56,16 +61,17 @@ async def test_get_troncons_no_session(mock_aioresponses: aioresponses) -> None:
 
 
 @pytest.mark.asyncio
-async def test_get_troncons_http_error(mock_aioresponses: aioresponses, session: ClientSession) -> None:
+async def test_get_troncons_http_error(
+    mock_aioresponses: aioresponses, session: ClientSession
+) -> None:
     """Test troncons with HTTP error."""
     add_response(
         mock_aioresponses,
         "GET",
         "https://www.vigicrues.gouv.fr/services/v1.1/TerEntVigiCru.json",
-        status=500
+        status=500,
     )
 
     client = VigicruesClient(session=session)
     with pytest.raises(aiohttp.ClientResponseError):
         await client.get_troncons("25")
-
