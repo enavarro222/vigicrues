@@ -19,6 +19,7 @@ from vigicrues.models import (
 )
 from vigicrues import cli
 
+
 @pytest.fixture
 def mock_print():
     """Fixture for mocking print function."""
@@ -207,7 +208,7 @@ async def test_get_command_http_error(
     mock_vigicrues_client.get_station_details.side_effect = aiohttp.ClientResponseError(
         request_info=Mock(), history=Mock(), status=404, message="Not Found"
     )
-    
+
     await cli.run(mock_args)
 
     mock_print.assert_called_once_with("Impossible to trouver la station O408101001")
