@@ -5,8 +5,6 @@ from __future__ import annotations
 import aiohttp
 from typing import List, Dict
 
-from pydantic import ValidationError
-
 from .models import Station
 
 

@@ -2,7 +2,6 @@
 
 import aiohttp
 import pytest
-import re
 from aioresponses import aioresponses
 
 from vigicrues import Vigicrues

@@ -2,7 +2,6 @@
 
 import aiohttp
 from aiohttp import ClientSession
-import re
 
 import pytest
 from aioresponses import aioresponses
