@@ -32,7 +32,7 @@ jobs:
         run: ruff check vigicrues/ tests/
   
       - name: Check typing with mypy
-        run: mypy vigicrues/
+        run: mypy --strict vigicrues/
   
   test:
     runs-on: ubuntu-latest
