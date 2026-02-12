@@ -2,6 +2,7 @@
 
 ## NEXT RELEASE
 
+- Add search method override with details loading (and filtering of non existing stations)
 - Catch http error for better message on cli "get" method
 - Add a filtering of closed stations in search results.
 

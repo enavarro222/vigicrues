@@ -38,7 +38,7 @@ async def test_main_client_context_manager(mock_aioresponses: aioresponses) -> N
     )
 
     async with Vigicrues() as client:
-        stations = await client.search_stations("Sulpice")
+        stations = await client.search_stations("Sulpice", check=False)
         territories = await client.get_territories()
 
         assert len(stations) == 1
@@ -70,7 +70,7 @@ async def test_main_client_external_session(mock_aioresponses: aioresponses) -> 
 
     async with aiohttp.ClientSession() as session:
         client = Vigicrues(session=session)
-        stations = await client.search_stations("Sulpice")
+        stations = await client.search_stations("Sulpice", check=False)
 
         assert len(stations) == 1
         assert stations[0].id == "O408101001"
@@ -99,7 +99,7 @@ async def test_main_client_timeout(mock_aioresponses: aioresponses) -> None:
     )
 
     async with Vigicrues(timeout=10.0) as client:
-        stations = await client.search_stations("Sulpice")
+        stations = await client.search_stations("Sulpice", check=False)
 
         assert len(stations) == 1
         assert stations[0].id == "O408101001"
@@ -118,4 +118,4 @@ async def test_main_client_http_error(mock_aioresponses: aioresponses) -> None:
 
     async with Vigicrues() as client:
         with pytest.raises(aiohttp.ClientResponseError):
-            await client.search_stations("Sulpice")
+            await client.search_stations("Sulpice", check=False)
