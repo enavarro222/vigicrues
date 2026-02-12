@@ -106,3 +106,42 @@ async def test_search_stations_invalid_data(
     client = DiscoveryClient(session)
     with pytest.raises(ValueError):
         await client.search_stations("Sulpice")
+
+
+@pytest.mark.asyncio
+async def test_search_stations_filters_closed_stations(
+    mock_aioresponses: aioresponses, session: ClientSession
+) -> None:
+    """Test that closed stations are filtered out."""
+    add_response(
+        mock_aioresponses,
+        "GET",
+        "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/referentiel-des-stations-du-reseau-vigicrues/records",
+        body={
+            "total_count": 3,
+            "results": [
+                {
+                    "cdstationhydro": "O937251001",
+                    "lbstationhydro": "Le Dropt à Saint-Sulpice-de-Guilleragues",
+                    "dtfermeturestationhydro": "1987-09-24T10:00:00+00:00",
+                },
+                {
+                    "cdstationhydro": "O408101001",
+                    "lbstationhydro": "Le Tarn à Rabastens - Saint-Sulpice",
+                    "dtfermeturestationhydro": None,
+                },
+                {
+                    "cdstationhydro": "R324401002",
+                    "lbstationhydro": "L'Antenne à Saint-Sulpice-de-Cognac [Javrezac]",
+                    "dtfermeturestationhydro": "2019-04-08T12:00:00+00:00",
+                },
+            ],
+        },
+    )
+
+    client = DiscoveryClient(session)
+    stations = await client.search_stations("Sulpice")
+
+    assert len(stations) == 1
+    assert stations[0].id == "O408101001"
+    assert stations[0].name == "Le Tarn à Rabastens - Saint-Sulpice"

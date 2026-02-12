@@ -21,17 +21,22 @@ class DiscoveryClient:
         """
         self._session = session
 
-    def _process_station_result(self, station_data: Dict[str, str]) -> Station:
+    def _process_station_result(self, station_data: Dict[str, str]) -> Station | None:
         """Process a single station result from the API response.
 
         Args:
             result: A single result dictionary from the API response
 
         Returns:
-            Station object if valid, None if invalid
+            Station object if valid and active, None if invalid or closed
         """
         if "cdstationhydro" not in station_data or "lbstationhydro" not in station_data:
             raise ValueError("Invalid station data")
+
+        # Filter out closed stations
+        if station_data.get("dtfermeturestationhydro") is not None:
+            return None
+
         return Station(
             id=station_data["cdstationhydro"],
             name=station_data["lbstationhydro"],
@@ -71,5 +76,8 @@ class DiscoveryClient:
             if not isinstance(data, dict):
                 raise ValueError("Got invalid data")
             results = data.get("results", [])
-            stations = [self._process_station_result(result) for result in results]
-            return stations
+            return [
+                station
+                for result in results
+                if (station := self._process_station_result(result)) is not None
+            ]
