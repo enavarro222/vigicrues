@@ -250,4 +250,4 @@ This client uses the following official Vigicrues APIs:
 
 ## Support
 
-For issues and questions, please open an issue on the [GitHub repository](https://github.com/your-username/vigicrues-client).
+For issues and questions, please open an issue on the [GitHub repository](https://github.com/enavarro222/vigicrues).
