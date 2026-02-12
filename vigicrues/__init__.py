@@ -1,4 +1,4 @@
-"""Modern asynchronous Python client for the Vigicrues API (French flood monitoring service)."""
+"""Asynchronous Python client for the Vigicrues API (French flood monitoring service)."""
 from .client import Vigicrues
 from .discovery import DiscoveryClient
 from .vigicrues import VigicruesClient
