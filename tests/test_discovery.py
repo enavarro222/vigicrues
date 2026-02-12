@@ -5,8 +5,6 @@ from aiohttp import ClientSession
 import pytest
 from aioresponses import aioresponses
 
-from pydantic import ValidationError
-
 from vigicrues.discovery import DiscoveryClient
 from tests.conftest import add_response
 
