@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Optional, Type
+from types import TracebackType
 import aiohttp
 
 from .discovery import DiscoveryClient
@@ -34,7 +36,12 @@ class Vigicrues(VigicruesClient, DiscoveryClient):
             )
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> None:
         """Exit async context, closing session only if we own it."""
         if self._owns_session and self._session:
             await self._session.close()
