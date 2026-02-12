@@ -30,9 +30,11 @@ class DiscoveryClient:
         Returns:
             Station object if valid, None if invalid
         """
+        if "cdstationhydro" not in station_data or "lbstationhydro" not in station_data:
+            raise ValueError("Invalid station data")
         return Station(
-            id=station_data.get("cdstationhydro"),
-            name=station_data.get("lbstationhydro"),
+            id=station_data["cdstationhydro"],
+            name=station_data["lbstationhydro"],
         )
 
     async def search_stations(self, query: str) -> List[Station]:

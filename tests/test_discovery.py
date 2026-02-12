@@ -106,5 +106,5 @@ async def test_search_stations_invalid_data(
     )
 
     client = DiscoveryClient(session)
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         await client.search_stations("Sulpice")
