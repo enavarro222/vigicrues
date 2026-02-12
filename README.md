@@ -245,8 +245,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 This client uses the following official Vigicrues APIs:
 
-- **OpenDataSoft API**: Station metadata and search
-- **Vigicrues API**: Real-time observations and station details
+- **Vigicrues API**: [Real-time observations and station details](https://www.vigicrues.gouv.fr/)
+- **OpenDataSoft API**: [Station metadata and search](https://public.opendatasoft.com/explore/dataset/referentiel-des-stations-du-reseau-vigicrues/information/)
 
 ## Support
 
