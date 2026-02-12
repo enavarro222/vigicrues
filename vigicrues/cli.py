@@ -30,18 +30,27 @@ async def get(client: Vigicrues, args: Any) -> None:
     print(f"River: {details.river}")
     print(f"City: {details.city}")
     print(f"Coordinates: ({details.latitude}, {details.longitude})")
+    print()
 
     if details.has_height_data:
-        observation = await client.get_latest_observations(details.id, "H")
-        print(
-            f"\nLatest water level: {observation.value} {observation.unit} at {observation.timestamp}"
-        )
+        try:
+            observation = await client.get_latest_observations(details.id, "H")
+        except ValueError:
+            print("Latest water level: No observations found")
+        else:
+            print(
+                f"Latest water level: {observation.value} {observation.unit} at {observation.timestamp}"
+            )
 
     if details.has_flow_data:
-        observation = await client.get_latest_observations(details.id, "Q")
-        print(
-            f"Latest flow rate: {observation.value} {observation.unit} at {observation.timestamp}"
-        )
+        try:
+            observation = await client.get_latest_observations(details.id, "Q")
+        except ValueError:
+            print("Latest flow rate: No observations found")
+        else:
+            print(
+                f"Latest flow rate: {observation.value} {observation.unit} at {observation.timestamp}"
+            )
 
 
 async def territories(client: Vigicrues, args: Any) -> None:

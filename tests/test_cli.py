@@ -23,7 +23,7 @@ from vigicrues import cli
 @pytest.fixture
 def mock_print():
     """Fixture for mocking print function."""
-    with patch("vigicrues.cli.print") as mock_print:
+    with patch("vigicrues.cli.print", wraps=print) as mock_print:
         yield mock_print
 
 
@@ -195,6 +195,46 @@ async def test_get_command_with_both_data(
     assert mock_vigicrues_client.get_latest_observations.call_count == 2
     mock_vigicrues_client.get_latest_observations.assert_any_call("O408101001", "H")
     mock_vigicrues_client.get_latest_observations.assert_any_call("O408101001", "Q")
+
+
+@pytest.mark.asyncio
+async def test_get_command_with_both_data_error_handling(
+    mock_args: argparse.Namespace, mock_vigicrues_client, mock_print
+) -> None:
+    """Test get CLI command with both height and flow data but ValueError (no data)."""
+    mock_args.station_id = "O408101001"
+    mock_args.func = cli.get
+
+    mock_vigicrues_client.get_station_details.return_value = StationDetails(
+        id="O408101001",
+        name="Le Tarn à Rabastens - Saint-Sulpice",
+        river="Le Tarn",
+        city="Rabastens",
+        latitude=43.823,
+        longitude=1.726,
+        has_height_data=True,
+        has_flow_data=True,
+        picture_url=None,
+        commune_code=None,
+        is_prediction_station=False,
+        has_predictions=False,
+        historical_floods=[],
+        related_stations=[],
+    )
+    mock_vigicrues_client.get_latest_observations.side_effect = [
+        ValueError("No observations found"),
+        ValueError("No observations found")
+    ]
+
+    await cli.run(mock_args)
+
+    mock_vigicrues_client.get_station_details.assert_called_once_with("O408101001")
+    assert mock_vigicrues_client.get_latest_observations.call_count == 2
+    mock_vigicrues_client.get_latest_observations.assert_any_call("O408101001", "H")
+    mock_vigicrues_client.get_latest_observations.assert_any_call("O408101001", "Q")
+    mock_print.assert_any_call("Latest flow rate: No observations found")
+    mock_print.assert_any_call("Latest water level: No observations found")
+
 
 
 @pytest.mark.asyncio
