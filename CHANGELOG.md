@@ -2,6 +2,7 @@
 
 ## NEXT RELEASE
 
+- Add `pyproj` as a dependency
 - Add error handling when no observations found in CLI
 - Add search method override with details loading (and filtering of non existing stations)
 - Catch http error for better message on cli "get" method
