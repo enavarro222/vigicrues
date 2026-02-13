@@ -150,7 +150,7 @@ class VigicruesClient:
         ...     "CoordXStationHydro": "567613",
         ...     "CoordYStationHydro": "6325598",
         ... }, station_id="O494101001")
-        (44.016925576596456, 1.348806124540339)
+        (44.016925576..., 1.348806124...)
 
         >>> VigicruesClient.extract_coordinates({
         ...     "CoordXStationHydro": "",
