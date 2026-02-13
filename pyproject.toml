@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "vigicrues"
-version = "0.1.0"
+version = "0.1.1"
 description = "Asynchronous Python client for the Vigicrues API (French flood monitoring service)"
 authors = [
     { name = "Emmanuel Navarro", email = "enavarro222@gmail.com" }

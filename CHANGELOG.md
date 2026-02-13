@@ -1,6 +1,6 @@
 # Changelog
 
-## NEXT RELEASE
+## [0.1.1] - 2026-02-13
 
 - Convert coordinates to WGS84 using `pyproj`.
 - Add `pyproj` as a dependency.
