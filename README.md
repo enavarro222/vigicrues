@@ -179,12 +179,12 @@ Base model for a Vigicrues monitoring station.
 
 #### StationDetails
 
-Extends Station with additional detailed information.
+Extends Station with additional detailed information. Coordinates are stored in WGS84 (latitude, longitude) format.
 
 - `river`: `str`
 - `city`: `str`
-- `latitude`: `float`
-- `longitude`: `float`
+- `latitude`: `float` - Latitude in WGS84 decimal degrees
+- `longitude`: `float` - Longitude in WGS84 decimal degrees
 - `picture_url`: `str | None`
 - `commune_code`: `str | None`
 - `is_prediction_station`: `bool`

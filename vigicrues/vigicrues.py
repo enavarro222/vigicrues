@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import List
+from typing import List, Tuple, Dict
 
 import aiohttp
+import pyproj
 
 from .models import (
     Observation,
@@ -21,6 +22,7 @@ class VigicruesClient:
     """Client for accessing Vigicrues API endpoints."""
 
     VIGICRUES_BASE_URL = "https://www.vigicrues.gouv.fr/services"
+    TRANSFORMER = pyproj.Transformer.from_crs("EPSG:2154", "EPSG:4326", always_xy=True)
 
     def __init__(self, session: aiohttp.ClientSession | None = None) -> None:
         """Initialize VigicruesClient.
@@ -138,6 +140,59 @@ class VigicruesClient:
 
             return stations
 
+    @classmethod
+    def extract_coordinates(
+        cls, coord_data: Dict[str, str], station_id: str
+    ) -> Tuple[float, float]:
+        """Extract and convert coordinates from station data.
+
+        >>> VigicruesClient.extract_coordinates({
+        ...     "CoordXStationHydro": "567613",
+        ...     "CoordYStationHydro": "6325598",
+        ... }, station_id="O494101001")
+        (44.016925576596456, 1.348806124540339)
+
+        >>> VigicruesClient.extract_coordinates({
+        ...     "CoordXStationHydro": "",
+        ...     "CoordYStationHydro": "6325598",
+        ... }, station_id="O494101001")
+        Traceback (most recent call last):
+        ...
+        ValueError: Missing coordinates for station O494101001
+
+        >>> VigicruesClient.extract_coordinates({
+        ...     "CoordXStationHydro": None,
+        ...     "CoordYStationHydro": "6325598",
+        ... }, station_id="O494101001")
+        Traceback (most recent call last):
+        ...
+        ValueError: Missing coordinates for station O494101001
+
+        >>> VigicruesClient.extract_coordinates({
+        ...     "CoordXStationHydro": "abc",
+        ...     "CoordYStationHydro": "6325598",
+        ... }, station_id="O494101001")
+        Traceback (most recent call last):
+        ...
+        ValueError: Invalid coordinate format: abc, 6325598
+        """
+        # Get Lambert 93 coordinates
+        x_str = coord_data.get("CoordXStationHydro")
+        y_str = coord_data.get("CoordYStationHydro")
+        if not x_str or not y_str:
+            raise ValueError(f"Missing coordinates for station {station_id}")
+
+        # Convert to float and validate
+        try:
+            x = float(x_str)
+            y = float(y_str)
+        except (TypeError, ValueError):
+            raise ValueError(f"Invalid coordinate format: {x_str}, {y_str}")
+
+        # Convert to WGS84
+        longitude, latitude = cls.TRANSFORMER.transform(x, y)
+        return latitude, longitude
+
     async def get_station_details(self, station_id: str) -> StationDetails:
         """Get comprehensive details for a specific station.
 
@@ -145,10 +200,10 @@ class VigicruesClient:
             station_id: Station identifier
 
         Returns:
-            Detailed station information
+            Detailed station information with WGS84 coordinates
 
         Raises:
-            ValueError: If station_id is empty
+            ValueError: If station_id is empty or coordinates are invalid
             aiohttp.ClientError: For HTTP errors
             json.JSONDecodeError: If response is not valid JSON
             ValidationError: If response data is invalid
@@ -166,13 +221,18 @@ class VigicruesClient:
             data = await response.json()
 
             station_data = data.get("VigilanceCrues", {})
+            coord_data = data.get("CoordStationHydro", {})
+            latitude, longitude = self.extract_coordinates(
+                coord_data, station_id=station_id
+            )
+
             return StationDetails(
                 id=station_id,
                 name=data.get("LbStationHydro"),
                 river=data.get("LbCoursEau"),
                 city=data.get("CdCommune"),
-                latitude=data.get("CoordStationHydro", {}).get("CoordXStationHydro"),
-                longitude=data.get("CoordStationHydro", {}).get("CoordYStationHydro"),
+                latitude=latitude,
+                longitude=longitude,
                 picture_url=station_data.get("Photo"),
                 commune_code=data.get("CdCommune"),
                 is_prediction_station=station_data.get("StationPrevision", False),

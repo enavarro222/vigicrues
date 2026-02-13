@@ -4,6 +4,7 @@ import aiohttp
 from aiohttp import ClientSession
 
 import pytest
+from pytest import approx
 from aioresponses import aioresponses
 from pydantic import ValidationError
 
@@ -51,8 +52,8 @@ async def test_get_station_details_success(
     assert details.name == "Montauban"
     assert details.river == "Tarn"
     assert details.city == "82121"
-    assert details.latitude == 567613
-    assert details.longitude == 6325598
+    assert details.latitude == approx(44.016925576596456)
+    assert details.longitude == approx(1.348806124540339)
     assert details.picture_url == "t"
     assert details.is_prediction_station is True
     assert len(details.historical_floods) == 1
@@ -70,10 +71,10 @@ async def test_get_station_invalid_details(
         "https://www.vigicrues.gouv.fr/services/station.json/index.php",
         body={
             "LbStationHydro": "Montauban",
-            "LbCoursEau": "Tarn",
+            "LbCoursEau": 33,  # invalid data
             "CdCommune": "82121",
             "CoordStationHydro": {
-                "CoordXStationHydro": "aer567613",  # invalid data
+                "CoordXStationHydro": "567613",
                 "CoordYStationHydro": "6325598",
             },
             "VigilanceCrues": {
