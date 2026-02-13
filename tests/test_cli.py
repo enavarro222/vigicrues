@@ -223,7 +223,7 @@ async def test_get_command_with_both_data_error_handling(
     )
     mock_vigicrues_client.get_latest_observations.side_effect = [
         ValueError("No observations found"),
-        ValueError("No observations found")
+        ValueError("No observations found"),
     ]
 
     await cli.run(mock_args)
@@ -234,7 +234,6 @@ async def test_get_command_with_both_data_error_handling(
     mock_vigicrues_client.get_latest_observations.assert_any_call("O408101001", "Q")
     mock_print.assert_any_call("Latest flow rate: No observations found")
     mock_print.assert_any_call("Latest water level: No observations found")
-
 
 
 @pytest.mark.asyncio
