@@ -253,7 +253,6 @@ async def test_get_command_http_error(
     mock_print.assert_called_once_with("Impossible to trouver la station O408101001")
     mock_vigicrues_client.get_station_details.assert_called_once_with("O408101001")
     mock_vigicrues_client.get_latest_observations.assert_not_called()
-    mock_vigicrues_client.get_latest_observations.assert_not_called()
 
 
 @pytest.mark.asyncio
