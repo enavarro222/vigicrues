@@ -114,16 +114,37 @@ async with aiohttp.ClientSession() as session:
 #### Search Stations
 
 ```python
-async def search_stations(self, query: str) -> list[Station]:
-    """Search for stations by name or location.
+async def search_stations(self, query: str, check: bool = True) -> list[Station] | list[StationDetails]:
+    """Search for stations by name or location with optional validation.
 
     Args:
         query: Search term (station name, city, etc.)
+        check: If True, validate each station by loading its details.
+               If False, return stations without validation. Default is True.
 
     Returns:
-        List of matching stations
+        List of matching stations. Returns list[StationDetails] if check=True,
+        otherwise returns list[Station].
+
+    Raises:
+        ValueError: If query is empty
+        aiohttp.ClientError: For HTTP errors
     """
 ```
+
+**Usage examples:**
+
+```python
+# With validation (default) - returns StationDetails
+stations = await client.search_stations("Paris")
+# stations is list[StationDetails] with full information
+
+# Without validation - returns basic Station objects
+stations = await client.search_stations("Paris", check=False)
+# stations is list[Station] with basic id and name only
+```
+
+Note that the search is done using OpenDataSoft API, which may return stations that are not active or do not have real-time data. Setting `check=True` ensures that only stations with valid details are returned, but it may take longer to execute due to additional API calls.
 
 #### Get Station Details
 
