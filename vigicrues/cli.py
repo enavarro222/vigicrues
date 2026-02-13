@@ -24,6 +24,7 @@ async def get(client: Vigicrues, args: Any) -> None:
     try:
         details = await client.get_station_details(args.station_id)
     except aiohttp.ClientResponseError:
+        # Intentionally in French - CLI messages are for French users
         print(f"Impossible to trouver la station {args.station_id}")
         return
     print(f"Station: {details.name}")
